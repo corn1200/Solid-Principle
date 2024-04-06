@@ -184,6 +184,88 @@ public class Calculator
 
 ## 리스코프 치환 원칙(Liskov's Substitution Principle)
 
+파생 클래스가 기본 클래스를 대체할 수 있어야 한다.       
+상속을 할 때 지켜야하는 원칙이다.     
+예를 들어, 탈것을 만들기 위해 Vehicle 클래스를 만들고 
+앞으로 가는 함수와 좌회전, 우회전 함수도 만든다.        
+이 탈것 클래스를 상속 받아서 자동차, 트럭 클래스를 만들고 기차 클래스도 만들어낸다.        
+기차는 상식적으로 좌회전이나, 우회전을 할 수 없지만 상속을 받았기 때문에 회전 관련 코드들은 여전히 존재한다.      
+그러나 기차의 경우엔 메소드를 비워두거나 예외처리를 해주어야 동작을 안 하거나 오류를 피할 수 있다.        
+즉, 리스코프 치환 원칙이란 하위 클래스가 어떠한 경우에도 부모 클래스를 대체할 수 있어야 한다는 것을 의미한다.
+
+해당 원칙을 잘 지키기 위해선:
+
+1. 추상 클래스를 간단하게 만든다.
+2. 더 분류를 세분화한다.
+3. 상속을 쓰는 것보다는 인터페이스를 생성해서 여러 인터페이스를 조합한다.
+
+### 예시
+
+Worst Practice: 사용하지 않거나 사용할 수 없는 기능까지 상속 받은 클래스를 만든다.
+
+```csharp
+public class Vehicle
+{
+    public void GoForward() {}
+    public void TurnRight() {}
+    public void TurnLeft() {}
+}
+
+public class Truck : Vehicle {}
+public class Train : Vehicle {}
+public class Car : Vehicle {}
+
+public class Navigator
+{
+    public void Move(Vehicle vehicle)
+    {
+        // 상속을 받아버려서, 기차도 회전이 됨
+        Train train = vehicle as Train;
+        train.TurnLeft();
+        
+        vehicle.GoForward();
+        vehicle.TurnLeft();
+        vehicle.GoForward();
+        vehicle.TurnRight();
+        vehicle.GoForward();
+    }
+}
+```
+
+Best Practice: 단순하게 특정 목적의 클래스를 만드는게 아니라 여러 기능을 인터페이스로 분리하고 조합하여 클래스를 만들어 상속한다.
+
+```csharp
+public interface IMovable
+{
+    public void GoForward();
+    public void Reverse();
+}
+
+public interface ITurnable
+{
+    public void TurnRight();
+    public void TurnLeft();
+}
+
+public class RailVehicle : IMovable
+{
+    public void GoForward() {}
+    public void Reverse() {}
+}
+
+public class RoadVehicle : IMovable, ITurnable
+{
+    public void GoForward() {}
+    public void Reverse() {}
+    public void TurnRight() {}
+    public void TurnLeft() {}
+}
+
+public class Train : RailVehicle {}
+
+public class Car : RoadVehicle {}
+```
+
 ## 인터페이스 분리 원칙(Interface Segregation Principle)
 
 ## 의존성 역전 원칙(Dependency Inversion Principle)
