@@ -104,17 +104,83 @@ public class InputComponent
 }
 
 public class AudioComponent
- {
-     private AudioSource _bounceSfx;
-
-     public void PlayBounce()
-     {
-         _bounceSfx.Play();
-     }
- }
+{
+    private AudioSource _bounceSfx;
+    
+    public void PlayBounce()
+    {
+        _bounceSfx.Play();
+    }
+}
 ```
 
 ## 개방 폐쇄 원칙(Open/Closed Principle)
+
+클래스가 확장에는 개방되어 있고 수정에는 닫혀 있어야 한다.      
+원본 코드를 수정하지 않고 새로운 동작을 추가할 수 있어야 한다.      
+타입이 추가될 때마다 클래스가 계속 수정된다면 여러가지 휴먼에러가 발생할 가능성이 높다.
+
+### 예시
+
+Worst Practice: 타입이 추가될 때마다 클래스가 계속 수정되어야 한다.
+
+```csharp
+public class Calculator
+{
+    public float GetRectangleArea(Rectangle rectangle)
+    {
+        return rectangle.width * rectangle.height;
+    }
+    
+    public float GetCircleArea(Circle circle)
+    {
+        return circle.radius * circle.radius * Mathf.PI;
+    }
+    
+    public float GetPentagonArea(Pentagon pentagon)
+    {
+        // 오각형 넓이 구하는 코드
+    }
+}
+```
+
+Best Practice: 수정을 하지 않고도 계속 기능을 추가할 수 있도록 추상화와 상속을 활용한다.
+
+```csharp
+public abstract class Shape
+{
+    public abstract float CalculateArea();
+}
+
+public class Circle : Shape
+{
+    public float radius;
+
+    public override float CalculateArea()
+    {
+        return radius * radius * Mathf.PI;
+    }
+}
+
+public class Rectangle : Shape
+{
+    public float width;
+    public float height;
+
+    public override float CalculateArea()
+    {
+        return width * height;
+    }
+}
+
+public class Calculator
+{
+    public float GetArea(Shape shape)
+    {
+        return shape.CalculateArea();
+    }
+}
+```
 
 ## 리스코프 치환 원칙(Liskov's Substitution Principle)
 
