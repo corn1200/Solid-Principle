@@ -10,12 +10,10 @@ namespace InterfaceSegregation.BestPractice
 
         public void GoForward()
         {
-            throw new NotImplementedException();
         }
 
         public void Reverse()
         {
-            throw new NotImplementedException();
         }
 
         public int Strength { get; set; }

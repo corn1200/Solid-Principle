@@ -268,4 +268,83 @@ public class Car : RoadVehicle {}
 
 ## 인터페이스 분리 원칙(Interface Segregation Principle)
 
+인터페이스를 사용할 때 한번에 크게 사용하지 말고 작은 단위로 나눠서 사용해야 한다.     
+예를 들어 유닛 스테이터스 관련 인터페이스가 있다면, 한 클래스에 모든 요소를 넣지 말고 최대한 나눠야 한다.   
+이동 인터페이스, 데미지 인터페이스, 스텟 인터페이스 등으로 나누어 이런 인터페이스들을 조합하는 형태로 확장시켜 나간다.  
+
+1. 코드 결합도가 낮아진다.
+2. 수정이 용이해진다.
+
+### 예시
+
+Worst Practice: 한 인터페이스에 모든 요소를 넣어서 구현한다.
+
+```csharp
+public interface IUnitStats
+{
+    public float Health { get; set; }
+    public int Defense { get; set; }
+    public void TakeDamage();
+    public float MoveSpeed { get; set; }
+    public void GoForward();
+    public int Strength { get; set; }
+    public int Dexterity { get; set; }
+}
+```
+
+Best Practice: 각 기능 관련 요소로 인터페이스를 나누고 조합하여 코드를 확장한다.
+
+```csharp
+public interface IDamageable
+{
+    public float Health { get; set; }
+    public int Defense { get; set; }
+    public void Die();
+    public void TakeDamage();
+    public void RestoreHealth();
+}
+
+public interface IMovable
+{
+    public float MoveSpeed { get; set; }
+    public float Acceleration { get; set; }
+    public void GoForward();
+    public void Reverse();
+}
+
+public interface IUnitStats
+{
+    public int Strength { get; set; }
+    public int Dexterity { get; set; }
+    public int Endurance { get; set; }
+}
+
+public class EnemyUnit : MonoBehaviour, IDamageable, IMovable, IUnitStats
+{
+    public float Health { get; set; }
+    public int Defense { get; set; }
+    public void Die() {}
+    public void TakeDamage() {}
+    public void RestoreHealth() {}
+    public float MoveSpeed { get; set; }
+    public float Acceleration { get; set; }
+    public void GoForward() {}
+    public void Reverse() {}
+    public int Strength { get; set; }
+    public int Dexterity { get; set; }
+    public int Endurance { get; set; }
+}
+
+public class UnDeadEnemyUnit : MonoBehaviour, IMovable, IUnitStats
+{
+    public float MoveSpeed { get; set; }
+    public float Acceleration { get; set; }
+    public void GoForward() {}
+    public void Reverse() {}
+    public int Strength { get; set; }
+    public int Dexterity { get; set; }
+    public int Endurance { get; set; }
+}
+```
+
 ## 의존성 역전 원칙(Dependency Inversion Principle)
