@@ -348,3 +348,95 @@ public class UnDeadEnemyUnit : MonoBehaviour, IMovable, IUnitStats
 ```
 
 ## 의존성 역전 원칙(Dependency Inversion Principle)
+
+고수준 모듈이 저수준 모듈에서 직접 요소를 가져오면 안 된다.      
+예를 들어 스위치 클래스가 토글할 객체를 직접적으로 알고 있으면(멤버 변수로 가지고 있으면) 그 객체만 컨트롤할 수 있게 된다.     
+하지만, 스위치라는 건 여러가지를 열고 닫거나, 활성/비활성화할 수 있어야 한다.
+
+1. 특정 클래스에 직접적으로 의존하면 안 된다.
+2. 인터페이스를 거쳐서 사용하여 느슨한 결합을 구현해야 한다.
+
+### 예시
+
+Worst Practice: 공통 기능을 수행하는 클래스가 특정 클래스만을 직접적으로 참조하도록 설계한다.
+
+```csharp
+public class Door : MonoBehaviour
+{
+    public void Open()
+    {
+        Debug.Log("The door is open.");
+    }
+
+    public void Close()
+    {
+        Debug.Log("The door is closed.");
+    }
+}
+
+public class Switch : MonoBehaviour
+{
+    public Door Door;
+    public bool IsActivated;
+
+    public void Toggle()
+    {
+        if (IsActivated)
+        {
+            IsActivated = false;
+            Door.Close();
+        }
+        else
+        {
+            IsActivated = true;
+            Door.Open();
+        }
+    }
+}
+```
+
+Best Practice: 특정 기능을 수행할 수 있는 인터페이스로 클래스를 연결하여 사용한다.
+
+```csharp
+public interface ISwitchable
+{
+    public bool IsActive { get; }
+    public void Activate();
+    public void Deactivate();
+}
+
+public class Switch : MonoBehaviour
+{
+    public ISwitchable client;
+
+    public void Toggle()
+    {
+        if (client.IsActive)
+        {
+            client.Deactivate();
+        }
+        else
+        {
+            client.Activate();
+        }
+    }
+}
+
+public class Door : MonoBehaviour, ISwitchable
+{
+    private bool _isActive;
+    public bool IsActive => _isActive;
+    
+    public void Activate()
+    {
+        _isActive = true;
+        Debug.Log("The door is open.");
+    }
+
+    public void Deactivate()
+    {
+        _isActive = false;
+        Debug.Log("The door is closed.");
+    }
+}
+```

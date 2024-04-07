@@ -2,7 +2,7 @@
 
 namespace DependencyInversion.WorstPractice
 {
-    public class Door:MonoBehaviour
+    public class Door : MonoBehaviour
     {
         public void Open()
         {

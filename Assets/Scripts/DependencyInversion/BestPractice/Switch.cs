@@ -2,7 +2,7 @@
 
 namespace DependencyInversion.BestPractice
 {
-    public class Switch:MonoBehaviour
+    public class Switch : MonoBehaviour
     {
         public ISwitchable client;
 
